@@ -42,7 +42,7 @@
       $mdDialog.hide(answer);
     };
     $scope.addDrug = function() {
-      $scope.p.drugs.push({drugname:'',drugdosage:'',drugtimes:'',drugfrequency:'day'});
+      $scope.p.drugs.push({name:'',dosage:'',times:'',frequency:'day'});
       console.log($rootScope.nd);
       console.log($scope.p);
     };
