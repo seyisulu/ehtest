@@ -120,7 +120,7 @@
             console.log("Login successful!");
             $rootScope.loginState = true;
             $rootScope.doctornumber = $rootScope.nd;
-            $http.get("/api/medications", {params: {doctor: $rootScope.doctornumber}})
+            $http.get("/api/medications", {params: {doctor: $rootScope.doctornumber/*,nocache: new Date().getTime()*/}})
               .success(function(response) {
                 console.log("Get Success: ");
                 console.log(response);
@@ -137,7 +137,6 @@
         console.log($scope.status);
       });
     };
-    
 
     $scope.tiles = buildGridModel({
             icon : "avatar:svg-",
@@ -173,13 +172,37 @@
       return results;
     }
     
+    
   }
   angular.module('eHospital').controller('IndexCtrl', IndexCtrl);
     
-  function PCtrl ($rootScope, $scope, UserSvc) {
+  function PCtrl ($rootScope, $scope, $http, UserSvc) {
     $rootScope.activePage = 'prescriptions';
     $rootScope.homeLoaded = 0;
-    $scope.ps = $rootScope.previous;
+    $scope.ps = $rootScope.previous?$rootScope.previous:[];
+    // if($scope.ps.length<1) {
+      $http.get("/api/medications", {params: {doctor: $rootScope.nd/*,nocache: new Date().getTime()*/}})
+        .success(function(response) {
+          console.log("Get Success: ");
+          console.log(response);
+          $scope.ps = response;
+          $rootScope.previous = response;
+        });      
+    // }
+    $scope.reminder   = function(c,d){
+      console.log("This is c: "+c);
+      console.log("This is d: "+d);
+      $http.post('/api/sms',{
+        patient: $rootScope.previous[c].drugs[d].name,
+        lang: $rootScope.previous[c].lang,
+        drugs: [{
+          name: $rootScope.previous[c].drugs[d].name,
+          dosage: $rootScope.previous[c].drugs[d].dosage,
+          times: $rootScope.previous[c].drugs[d].times,
+          frequency: $rootScope.previous[c].drugs[d].frequency
+        }]
+      });
+    }
   }
   angular.module('eHospital').controller('PCtrl', PCtrl);
     
@@ -247,8 +270,8 @@
             console.log("Login successful!");
             $rootScope.loginState = true;
             $rootScope.doctornumber = $rootScope.nd;
-                console.log($rootScope.doctornumber);
-            $http.get("/api/medications", {params: {doctor: $rootScope.doctornumber,nocache: new Date().getTime()}})
+            console.log($rootScope.doctornumber);
+            $http.get("/api/medications", {params: {doctor: $rootScope.doctornumber/*,nocache: new Date().getTime()*/}})
               .success(function(response) {
                 console.log("Get Success: ");
                 console.log(response);
@@ -280,13 +303,14 @@
         $http.post('/api/medications', {
           doctor: $rootScope.nd,
           patient: $rootScope.p.number,
-          language: $rootScope.p.language,
+          lang: $rootScope.p.language,
           drugs: $rootScope.p.drugs
         })
         .success(function(response) {
           console.log("Post Success: ");
           console.log(response);
-          $rootScope.previous = response;        
+          $rootScope.previous = response;  
+          location.hash='/dash';
         })
         .error(function(response){
           console.log("Error: "+response);

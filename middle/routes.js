@@ -18,16 +18,16 @@ module.exports = function(app){
 		// english case - this one will call
 		if(req.body.lang=="English")
 		{
-				// client.sendSMS({
-				// to:  req.body.patient, //'+2347036310418',
-				// // from: '+15005550006',
-				// from: '+13343842829',
-				// body: req.body.drugs[0].dosage + " of " + req.body.drugs[0].name + " " + req.body.drugs[0].times + " times, every " + req.body.drugs[0].frequency
-				client.makeCall({
+				client.messages.create({
 				to:  req.body.patient, //'+2347036310418',
 				// from: '+15005550006',
 				from: '+13343842829',
-				url: 'http://demo.twilio.com/docs/voice.xml'
+				body: req.body.drugs[0].dosage + " of " + req.body.drugs[0].name + " " + req.body.drugs[0].times + " times, every " + req.body.drugs[0].frequency
+				// client.makeCall({
+				// to:  req.body.patient, //'+2347036310418',
+				// // from: '+15005550006',
+				// from: '+13343842829',
+				// url: 'http://demo.twilio.com/docs/voice.xml'
 			}, function(error, message) {
 				if (error) {
 					console.log(error.message);
@@ -38,7 +38,7 @@ module.exports = function(app){
 		// yoruba case
 		else if(req.body.lang=="Yoruba")
 		{
-				client.sendSMS({
+				client.messages.create({
 				to:  req.body.patient, //'+2347036310418',
 				// from: '+15005550006',
 				from: '+13343842829',
@@ -54,7 +54,7 @@ module.exports = function(app){
 		// pidgin case
 		else if(req.body.lang=="Pidgin")
 		{
-				client.sendSMS({
+				client.messages.create({
 				to:  req.body.patient, //'+2347036310418',
 				// from: '+15005550006',
 				from: '+13343842829',
@@ -71,27 +71,49 @@ module.exports = function(app){
 
 	});
 
-	// Create a route to respond to a call
+	// Create a route to respond to inbound sms
 	app.post('/api/respondToSMS', function(req, res) {
 		console.log("Person sent:"+req.body.Body);
 		console.log("From number:"+req.body.From);
+		var twiml = new twilio.TwimlResponse();
 		//Validate that this request really came from Twilio...
 		// if (twilio.validateExpressRequest(req, client.authToken)) {
-			var twiml = new twilio.TwimlResponse();
+			medications.find({'patient':req.body.From}, function(err, found){
+				if (err)
+                    res.send(err)
+                else(!err)
+                {
+                	cur_case = found;
+                	if(cur_case[0].lang=="Pidgin"&&req.body.Body.indexOf("1")!=1)
+                	{
+                		twiml.message('Una too much!');
+                		res.writeHead(200, {
+                			'Content-Type':'text/xml'
+                		});
+                		res.end(twiml.toString());
+                	}
+                	else if(cur_case[0].lang=="English"&&req.body.Body.indexOf("1")!=1)
+                	{
+                		twiml.message("Thank you for obliging!");
+                		res.writeHead(200, {
+                			'Content-Type':'text/xml'
+                		});
+                		res.end(twiml.toString());
+                	}
+                }
+                
+			})
 			// twiml.say('Hi! Thanks for checking out my app!')
 			// .play('http://myserver.com/mysong.mp3');
 			// res.type('text/xml');
 			// res.send(twiml.toString());
-			twiml.message('Thanks for subscribing!');
-			res.writeHead(200, {
-				'Content-Type':'text/xml'
-			});
-			res.end(twiml.toString());
+			
 		// }
 		// else {
 			// res.send('you are not twilio.  Buzz off.');
 		// }
 	});
+
 
 	app.get("/api/hospitals", function(req,res){
 		// console.log(req.query);
