@@ -11,19 +11,65 @@ var hospitals	=		require('../back/hospitals.js');
 // ===================== //
 module.exports = function(app){
 
-	// app.post("/api/sms", function(req,res){
-	// 	console.log("Food!");
-	// 	client.messages.create({
-	// 		to:'+2347036310418',
-	// 		from:'+13343842829',
-	// 		body:'Awon aiiiyee!!! Won lenu razzooorr!! Twilio is working! Oooose!!'
-	// 	}, function(error, message) {
-	// 		if (error) {
-	// 			console.log(error.message);
-	// 		}
-	// 	});
+	app.post("/api/sms", function(req,res){
+		// console.log(req.body.lang);
+		console.log("Food!");
+		console.log(req.body);
+		// english case - this one will call
+		if(req.body.lang=="English")
+		{
+				// client.sendSMS({
+				// to:  req.body.patient, //'+2347036310418',
+				// // from: '+15005550006',
+				// from: '+13343842829',
+				// body: req.body.drugs[0].dosage + " of " + req.body.drugs[0].name + " " + req.body.drugs[0].times + " times, every " + req.body.drugs[0].frequency
+				client.makeCall({
+				to:  req.body.patient, //'+2347036310418',
+				// from: '+15005550006',
+				from: '+13343842829',
+				url: 'http://demo.twilio.com/docs/voice.xml'
+			}, function(error, message) {
+				if (error) {
+					console.log(error.message);
+				}
+				console.log("Successfully sent to Twilio");
+			});
+		}
+		// yoruba case
+		else if(req.body.lang=="Yoruba")
+		{
+				client.sendSMS({
+				to:  req.body.patient, //'+2347036310418',
+				// from: '+15005550006',
+				from: '+13343842829',
+				body: "Ko mu " + req.body.drugs[0].name + " eyo " + req.body.drugs[0].dosage + ", nigba " + req.body.drugs[0].times + " l'ojojumo"
 
-	// });
+			}, function(error, message) {
+				if (error) {
+					console.log(error.message);
+				}
+				console.log("Successfully sent");
+			});
+		}
+		// pidgin case
+		else if(req.body.lang=="Pidgin")
+		{
+				client.sendSMS({
+				to:  req.body.patient, //'+2347036310418',
+				// from: '+15005550006',
+				from: '+13343842829',
+				body: "Make you take " + req.body.drugs[0].dosage + " of your " + req.body.drugs[0].name + " for " + req.body.drugs[0].times + " times every momo"
+				
+			}, function(error, message) {
+				if (error) {
+					console.log(error.message);
+				}
+				console.log("Successfully sent");
+			});
+		}
+		
+
+	});
 
 	// Create a route to respond to a call
 	app.post('/api/respondToSMS', function(req, res) {
