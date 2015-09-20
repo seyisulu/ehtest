@@ -125,10 +125,11 @@ module.exports = function(app){
 	});
 
 	app.post("/api/medications", function(req,res){
-		// console.log(req.body.doctor);
+		console.log(req.body);
 		medications.create({
 			doctor: req.body.doctor,
 			patient: req.body.patient,
+			lang: req.body.language,
 			drugs: req.body.drugs
 		},function(err,entry){
 			if(err)

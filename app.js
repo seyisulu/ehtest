@@ -19,13 +19,7 @@ var db              	= 		mongoose.connect(database.url).connection;
     db.once('open', function callback() {
         console.log("...and I'm connected to Mongo DB as well...;)");
     });
-//required for passport
-require('./middle/passport')(passport); // pass passport for configuration
-app.use(passport.initialize());
-app.use(passport.session()); // persistent login sessions
 
-var index = require('./middle/index');
-require('./middle/routes')(app);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'public/views'));
@@ -42,6 +36,13 @@ app.use(methodOverride());
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+//required for passport
+app.use(passport.initialize());
+app.use(passport.session()); // persistent login sessions
+require('./middle/passport')(passport); // pass passport for configuration
+
+var index = require('./middle/index');
+require('./middle/routes')(app);
 
 app.use('/', index);
 app.post('/', passport.authenticate('local-login'), function(req, res) {

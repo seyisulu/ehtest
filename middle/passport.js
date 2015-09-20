@@ -17,42 +17,6 @@ module.exports = function(passport){
     });
 
 
-    //sign-up for a specific user
-    // passport.use('local-signup',new LocalStrategy(
-    //     {usernameField : 'doctor'},
-    //     function(doctor, password, done) {
-    //     process.nextTick(function() {
-    //     // find a user whose doctor is the same as the forms doctor
-    //     // we are checking to see if the user trying to login already exists
-    //         userDetails.findOne({ 'doctor': doctor,
-    //     }, function(err, user) {
-    //         // if there are any errors, return the error
-    //         if (err)
-    //             return done(err);
-
-    //         // check to see if theres already a user with that doctor
-    //         if (user) {
-    //             return done(null, false);
-    //         } else {
-
-    //             // if there is no user with that doctor
-    //             // create the user
-    //             var newUser            = new userDetails();
-
-    //             // set the user's local credentials
-    //             newUser.doctor    = doctor;
-    //             newUser.password    = password;
-
-    //             // save the user
-    //             newUser.save(function(err) {
-    //                 if (err)
-    //                     throw err;
-    //                 return done(null, newUser);
-    //             });
-    //         }
-    //     });    
-    //     });
-    // }));
     //login and signup for a specific user
     passport.use('local-login',new LocalStrategy({
         usernameField : 'doctor',
