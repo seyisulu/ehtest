@@ -256,7 +256,7 @@
             $rootScope.loginState = true;
             $rootScope.doctornumber = $rootScope.dn;
                 console.log($rootScope.doctornumber);
-            $http.get("/api/medications", {params: {doctor: $rootScope.doctornumber}})
+            $http.get("/api/medications", {params: {doctor: $rootScope.doctornumber,nocache: new Date().getTime()}})
               .success(function(response) {
                 console.log("Get Success: ");
                 console.log(response);
