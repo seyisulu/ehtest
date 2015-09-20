@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <% include parts/header %>
+</head>
+    <body ng-app="eHospital">
+    
+        <div layout="row" flex>
+
+            <div layout="column" flex id="content">
+                <md-content layout="column" flex class="md-padding">
+                    <div layout="column">
+                      <md-content class="md-padding" layout="column">
+                        <h1><%= message %></h1>
+                        <h2><%= error.status %></h2>
+                        <% if (error.stack) { %>
+                            <% //error.stack.forEach(function(es){ %>
+                              <pre class="note"><%= error.stack %></pre>
+                            <% //}) %>
+                        <% } %>
+                      </md-content>
+                    </div>
+                </md-content>
+            </div>
+        </div>
+
+        <% include parts/footer %>
+
+    </body>
+</html>

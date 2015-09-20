@@ -1,0 +1,56 @@
+<md-dialog aria-label="Mango (Fruit)" style="min-width: 35%;">
+  <form name="prescriber">
+  <md-toolbar>
+    <div class="md-toolbar-tools">
+      <h2>Prescription Details</h2>
+      <span flex></span>
+      <md-button class="md-icon-button" ng-click="cancel()">
+        <md-icon md-svg-src="img/icons/ic_close_24px.svg" aria-label="Close dialog"></md-icon>
+      </md-button>
+    </div>
+  </md-toolbar>
+  <md-dialog-content style="max-width:800px;max-height:810px; ">
+    <div>
+      <md-content class="md-padding">
+          <md-input-container>
+            <md-icon md-svg-src="img/icons/ic_phone_24px.svg"></md-icon>
+            <input ng-model="p.phone" type="text" placeholder="Phone Number" ng-required="true">
+          </md-input-container>
+        <!-- repeat -->
+          <md-input-container ng-repeat-start="drug in p.drugs">
+            <md-icon md-svg-src="img/icons/ic_loupe_24px.svg"></md-icon>
+            <input ng-model="name" type="text" placeholder="Drug" ng-required="true">
+          </md-input-container>
+          <md-input-container>            
+            <input ng-model="dosage" type="number" placeholder="Dosage" ng-required="true">
+          </md-input-container>
+          <md-input-container ng-repeat-end>            
+            <input ng-model="times" type="number" placeholder="Times Daily" ng-required="true">
+          </md-input-container>
+        <!-- /repeat -->
+          <div layout="row" layout-align="end center">
+            <md-button class="md-fab md-primary md-hue-2" aria-label="Add Drug" ng-click="addDrug()">
+                <md-icon md-svg-src="img/icons/white/pencil.svg"></md-icon>
+                <md-tooltip>Add Drug</md-tooltip>
+            </md-button>
+            <md-button class="md-fab md-warn md-hue-2" aria-label="Add Drug" ng-click="remDrug()" ng-show="p.drugs.length>1">
+                <md-icon md-svg-src="img/icons/white/ic_cancel_24px.svg"></md-icon>
+                <md-tooltip>Remove Drug</md-tooltip>
+            </md-button>
+          </div>
+      </md-content>
+    </div>
+        
+    <div class="md-actions" layout="row" layout-align="start center">
+
+      <md-button class="md-raised md-primary" ng-click="answer('cancel')" >
+        Cancel
+      </md-button>
+      <md-button class="md-raised md-warn" ng-click="answer('go')" style="margin-right:20px;" >
+        Go
+      </md-button>
+    </div>
+    
+  </md-dialog-content>
+  </form>
+</md-dialog>

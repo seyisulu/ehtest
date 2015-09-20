@@ -1,0 +1,38 @@
+<md-dialog aria-label="Mango (Fruit)" style="min-width: 35%;">
+  <form name="trailer">
+  <md-toolbar>
+    <div class="md-toolbar-tools">
+      <h2>eHospital</h2>
+      <span flex></span>
+      <md-button class="md-icon-button" ng-click="cancel()">
+        <md-icon md-svg-src="img/icons/ic_close_24px.svg" aria-label="Close dialog"></md-icon>
+      </md-button>
+    </div>
+  </md-toolbar>
+  <md-dialog-content style="max-width:800px;max-height:810px; ">
+    <div>
+      <md-content class="md-padding">
+          <md-input-container>
+            <md-icon md-svg-src="img/icons/ic_phone_24px.svg"></md-icon>
+            <input ng-model="user.phone" type="text" placeholder="Phone Number" ng-required="true" autocomplete="off">
+          </md-input-container>
+          <md-input-container>
+            <md-icon md-svg-src="img/icons/key.svg"></md-icon>
+            <input ng-model="user.email" type="password" placeholder="Password" ng-required="true" autocomplete="off">
+          </md-input-container>
+      </md-content>
+    </div>
+        
+    <div class="md-actions" layout="row">
+      <span flex></span>
+      <md-button ng-click="answer('cancel')" >
+        Cancel
+      </md-button>
+      <md-button ng-click="answer('go')" style="margin-right:20px;" >
+        Go
+      </md-button>
+    </div>
+    
+  </md-dialog-content>
+  </form>
+</md-dialog>
