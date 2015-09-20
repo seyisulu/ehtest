@@ -185,11 +185,11 @@
     console.log($scope.gps());
 
     $scope.reminder   = function(c,d){
-      console.log("This is c: ", c);
+      console.log("This is c: "+c);
       console.log("This is d: "+d);
       console.log($rootScope.previous[c].drugs[0].name);
       $http.post('/api/sms',{
-        patient: $scope.gps()[c].patient,
+        patient: $rootScope.previous[c].patient,
         lang: $rootScope.previous[c].lang,
         drugs: [{
           name: $rootScope.previous[c].drugs[0].name,

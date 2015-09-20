@@ -11,24 +11,26 @@
               md-row-height-gt-md="1:1" md-row-height="2:2"
               md-gutter="12px" md-gutter-gt-sm="8px" >
 
-          <p ng-show="previous.length<1">No prescriptions yet.</p>
+          <h2 ng-show="previous.length<1">No prescriptions yet.</h2>
 
-          <md-grid-tile class="red" md-rowspan="2" md-colspan="2" md-colspan-sm="1" ng-repeat="p in gps()">
+          <md-grid-tile class="yellow" md-rowspan="2" md-colspan="2" md-colspan-sm="2" ng-repeat="p in gps()">
             <p>{{p.lang}}</p>
-
-            <md-list>
-              
+            <md-list>              
               <md-list-item class="md-2-line" ng-repeat="drg in p.drugs">             
                 <div class="md-list-item-text">
-                  <h1> {{ drg.name }} </h1>
-                  <p>Dosage: <strong>{{drg.dosage}}</strong><br />Frequency: <strong>{{drg.times}}</strong> times every <strong>{{drg.frequency}}</strong></p>                  
+                  <h2 class="md-display-2"> {{ drg.name }} </h2>
+                  <p class="md-display-1">Dosage: <strong>{{drg.dosage}}</strong><br />Frequency: <strong>{{drg.times}}</strong> times every <strong>{{drg.frequency}}</strong></p>                  
                 </div>
               </md-list-item>
-              <button type = "submit" class="btn-primary" ng-click="reminder(previous.indexOf(p), previous[previous.indexOf(p)].drugs.indexOf(drg))">Call/Send SMS reminder</button>
             </md-list>
 
             <md-grid-tile-footer>
-              <h3>#{{$index+1}}: Patient Phone Number: {{p.patient}}</h3>
+              <h3>
+                <md-button class="md-raised md-warn" ng-click="reminder(previous.indexOf(p), previous[previous.indexOf(p)].drugs.indexOf(drg))" style="margin-right:20px;" >
+                  Remind
+                </md-button>                
+                (#{{$index+1}}) Phone: {{p.patient}}
+              </h3>
             </md-grid-tile-footer>
           </md-grid-tile>
 
