@@ -4,17 +4,15 @@
   function HomeCtrl ($rootScope, $scope, UserSvc) {
     $rootScope.activePage = 'home';
     $rootScope.homeLoaded = 0;
-    $scope.topDirections = ['left', 'up'];
-    $scope.bottomDirections = ['down', 'right'];
     $scope.isOpen = false;
-    $scope.availableModes = ['md-fling', 'md-scale'];
     $scope.selectedMode = 'md-fling';
-    $scope.availableDirections = ['up', 'down', 'left', 'right'];
     $scope.selectedDirection = 'up';
   }
   angular.module('eHospital').controller('HomeCtrl', HomeCtrl);
   
-  function DialogController($scope, $mdDialog) {
+  function DialogController($scope, $rootScope, $mdDialog) {
+    $scope.nd='';
+    $scope.np='';
     $scope.hide = function() {
       $mdDialog.hide();
     };
@@ -22,12 +20,16 @@
       $mdDialog.cancel();
     };
     $scope.answer = function(answer) {
+      $rootScope.nd=$scope.nd;
+      $rootScope.np=$scope.np;
       $mdDialog.hide(answer);
     };
   }
   
-  function PrescribeController($scope, $mdDialog) {
-    $scope.p = {number:'',drugs:[{name:'',dosage:'',times:''}]};
+  function PrescribeController($scope, $rootScope, $http, $mdDialog) {
+    $scope.p = {number:'',drugs:[{drugname:'',drugdosage:'',drugtimes:'',drugfrequency:'day'}]};
+    $scope.drugfrequency = "day";
+
     $scope.hide = function() {
       $mdDialog.hide();
     };
@@ -35,10 +37,23 @@
       $mdDialog.cancel();
     };
     $scope.answer = function(answer) {
+      $http.post('/api/medications', {
+        doctor: $rootScope.doctornumber,
+        patient: $scope.p.number,
+        drugs: $scope.p.drugs
+      })
+      .success(function(response) {
+        console.log("Post Success: ");
+        console.log(response);
+        $rootScope.previous = response;        
+      })
+      .error(function(response){
+        console.log("Error: "+response);
+      });
       $mdDialog.hide(answer);
     };
     $scope.addDrug = function() {
-      $scope.p.drugs.push({name:'',dosage:'',times:''});
+      $scope.p.drugs.push({drugname:'',drugdosage:'',drugtimes:'',drugfrequency:'day'});
     };
     $scope.remDrug = function() {
       if($scope.p.drugs.length>1) {
@@ -47,11 +62,19 @@
     };
   }
     
-  function IndexCtrl ($rootScope, $scope, $mdDialog, UserSvc) {
+  function IndexCtrl ($rootScope, $scope, $mdDialog, $http, UserSvc) {
     $rootScope.activePage = 'home';
     $rootScope.homeLoaded = 0;
     $scope.imagePath = 'img/ehospital-banner.png';
-    
+    $scope.hospitalist = [];
+
+    $http.get("/api/hospitals")
+    .success(function(response){
+      console.log("Hospital list success:");
+      console.log(response);
+      $scope.hospitalist = response;
+    });
+
     $scope.showRegister = function(ev) {
       $mdDialog.show({
         controller: DialogController,
@@ -62,7 +85,24 @@
       })
       .then(function(answer) {//Success
         $scope.status = 'Registering...';
-        console.log($scope.status);
+        console.log($rootScope.nd);
+        $http.post('/', {
+            doctor: $rootScope.nd,
+            password: $rootScope.np,
+            newsignup: true
+          })
+          .success(function(){
+            // No error: authentication OK
+            console.log("Signup successful!");
+            $rootScope.loginState = true;
+            $rootScope.doctornumber = $rootScope.dn;
+            location.hash='/dash';
+          })
+          .error(function(){
+            // Error: authentication failed
+            console.log($rootScope.dn + ' Unsucessful signup');
+          });
+
       }, function() {
         $scope.status = 'Cancelled.';
         console.log($scope.status);
@@ -78,7 +118,29 @@
       })
       .then(function(answer) {
         $scope.status = 'Logging in...';
-        console.log($scope.status);     
+        console.log($scope.status);
+        $http.post('/', {
+            doctor: $rootScope.nd,
+            password: $rootScope.np,
+            newsignup: false
+          })
+          .success(function(){
+            // No error: authentication OK
+            console.log("Login successful!");
+            $rootScope.loginState = true;
+            $rootScope.doctornumber = $rootScope.dn;
+            $http.get("/api/medications", {params: {doctor: $rootScope.doctornumber}})
+              .success(function(response) {
+                console.log("Get Success: ");
+                console.log(response);
+                $rootScope.previous = response;
+              });
+            location.hash='/dash';
+          })
+          .error(function(){
+            // Error: authentication failed
+            console.log($rootScope.dn + ' Unsucessful login');
+          });
       }, function() {
         $scope.status = 'Cancelled.';
         console.log($scope.status);
@@ -123,17 +185,22 @@
   }
   angular.module('eHospital').controller('IndexCtrl', IndexCtrl);
     
-  function CardCtrl ($rootScope, $scope, UserSvc) {
-    $rootScope.activePage = 'card';
+  function PCtrl ($rootScope, $scope, UserSvc) {
+    $rootScope.activePage = 'prescriptions';
     $rootScope.homeLoaded = 0;
-    $scope.imagePath = 'img/ehospital-banner.png';
   }
-  angular.module('eHospital').controller('CardCtrl', CardCtrl);
+  angular.module('eHospital').controller('PCtrl', PCtrl);
     
-  function BarCtrl ($rootScope, $scope, $mdDialog, UserSvc) {
+  function BarCtrl ($rootScope, $scope, $mdDialog, $http, UserSvc) {
     $scope.isOpen = false;
     $scope.selectedDirection = 'left';
     $scope.selectedMode = 'md-fling';
+    
+
+    $scope.goHome = function(ev) {
+      location.hash = '/home';
+      console.log('home');
+    };
     
     $scope.showRegister = function(ev) {
       $mdDialog.show({
@@ -146,6 +213,22 @@
       .then(function(answer) {//Success
         $scope.status = 'Registering...';
         console.log($scope.status);
+        $http.post('/', {
+            doctor: $rootScope.nd,
+            password: $rootScope.np,
+            newsignup: true
+          })
+          .success(function(){
+            // No error: authentication OK
+            console.log("Signup successful!");
+            $rootScope.loginState = true;
+            $rootScope.doctornumber = $rootScope.dn;
+            location.hash='/dash';
+          })
+          .error(function(){
+            // Error: authentication failed
+            console.log($rootScope.dn + ' Unsucessful signup');
+          });
       }, function() {
         $scope.status = 'Cancelled.';
         console.log($scope.status);
@@ -161,7 +244,30 @@
       })
       .then(function(answer) {
         $scope.status = 'Logging in...';
-        console.log($scope.status);     
+        console.log($scope.status);
+        $http.post('/', {
+            doctor: $rootScope.nd,
+            password: $rootScope.np,
+            newsignup: false
+          })
+          .success(function(){
+            // No error: authentication OK
+            console.log("Login successful!");
+            $rootScope.loginState = true;
+            $rootScope.doctornumber = $rootScope.dn;
+                console.log($rootScope.doctornumber);
+            $http.get("/api/medications", {params: {doctor: $rootScope.doctornumber}})
+              .success(function(response) {
+                console.log("Get Success: ");
+                console.log(response);
+                $rootScope.previous = response;
+              });
+            location.hash='/dash';
+          })
+          .error(function(){
+            // Error: authentication failed
+            console.log($rootScope.dn + ' Unsucessful login');
+          });     
       }, function() {
         $scope.status = 'Cancelled.';
         console.log($scope.status);

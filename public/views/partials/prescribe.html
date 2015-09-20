@@ -13,19 +13,29 @@
     <div>
       <md-content class="md-padding">
           <md-input-container>
-            <md-icon md-svg-src="img/icons/ic_phone_24px.svg"></md-icon>
             <input ng-model="p.phone" type="text" placeholder="Phone Number" ng-required="true">
+          </md-input-container>
+          <md-input-container>
+            <label>Language</label>
+            <md-select name="myModel" ng-model="myModel" required>
+              <md-option value="0">English</md-option>
+              <md-option value="1">Pidgin</md-option>
+              <md-option value="2">Yoruba</md-option>
+            </md-select>
+            <div class="errors" ng-messages="myForm.myModel.$error" ng-if="myForm.$dirty">
+              <div ng-message="required">Required</div>
+            </div>
           </md-input-container>
         <!-- repeat -->
           <md-input-container ng-repeat-start="drug in p.drugs">
             <md-icon md-svg-src="img/icons/ic_loupe_24px.svg"></md-icon>
-            <input ng-model="name" type="text" placeholder="Drug" ng-required="true">
+            <input ng-model="drugname" type="text" placeholder="Drug" ng-required="true">
           </md-input-container>
           <md-input-container>            
-            <input ng-model="dosage" type="number" placeholder="Dosage" ng-required="true">
+            <input ng-model="drugdosage" type="number" placeholder="Dosage" ng-required="true">
           </md-input-container>
           <md-input-container ng-repeat-end>            
-            <input ng-model="times" type="number" placeholder="Times Daily" ng-required="true">
+            <input ng-model="drugtimes" type="number" placeholder="Times Daily" ng-required="true">
           </md-input-container>
         <!-- /repeat -->
           <div layout="row" layout-align="end center">
@@ -40,7 +50,7 @@
           </div>
       </md-content>
     </div>
-        
+    <br>
     <div class="md-actions" layout="row" layout-align="start center">
 
       <md-button class="md-raised md-primary" ng-click="answer('cancel')" >

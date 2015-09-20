@@ -5,16 +5,8 @@
       .config(['$routeProvider','$httpProvider', function ($routeProvider,$httpProvider) {
     $routeProvider.when('/', 
                         {'templateUrl': '/views/partials/home.ejs', controller: 'IndexCtrl', controllerAs: 'index'});
-    $routeProvider.when('/card', 
-                        {'templateUrl': '/views/partials/card.ejs', controller: 'CardCtrl', controllerAs: 'card'});
-          
-    $routeProvider.when('/login', 
-                        {'templateUrl': '/views/partials/loginView.ejs', controller: 'LoginCtrl', controllerAs: 'login'});
-    $routeProvider.when('/logout', 
-                        {'templateUrl': '/views/partials/logoutView.html', controller: 'LogoutCtrl', controllerAs: 'logout'});
-    $routeProvider.when('/forgot', 
-                        {'templateUrl': '/views/partials/userForgotView.html', controller: 'UserForgetCtrl', controllerAs: 'uforget'});
-    //Patients
+    $routeProvider.when('/dash', 
+                        {'templateUrl': '/views/partials/prescriptions.ejs', controller: 'PCtrl', controllerAs: 'prescriptions'});
     $routeProvider.otherwise({redirectTo: '/'});
   }])
     .config( function( $mdIconProvider ){

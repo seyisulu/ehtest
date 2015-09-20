@@ -4,11 +4,28 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-
-var routes = require('./routes/index');
-var users = require('./routes/users');
+var mongoose			= 		require('mongoose');
+var passport			=		require('passport');
+var database			= 		require('./back/database');
+var user				=		require('./back/user');
+var methodOverride 		= 		require('method-override');       // simulate DELETE and PUT (express4)
+var flash           	= 		require('connect-flash');         //Connect-flash allows for passing session flashdata messages.
+var session         	= 		require('express-session');
 
 var app = express();
+// connect to the database
+var db              	= 		mongoose.connect(database.url).connection;
+    db.on('error', console.error.bind(console, 'connection error:'));
+    db.once('open', function callback() {
+        console.log("...and I'm connected to Mongo DB as well...;)");
+    });
+//required for passport
+require('./middle/passport')(passport); // pass passport for configuration
+app.use(passport.initialize());
+app.use(passport.session()); // persistent login sessions
+
+var index = require('./middle/index');
+require('./middle/routes')(app);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'public/views'));
@@ -19,12 +36,18 @@ app.set('view engine', 'ejs');
 app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json({ type: 'application/vnd.api+json' })); // parse application/vnd.api+json as json
+app.use(methodOverride());
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', routes);
-app.use('/users', users);
+
+app.use('/', index);
+app.post('/', passport.authenticate('local-login'), function(req, res) {
+        console.log(req.user);
+        res.json(req.user);
+    });
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

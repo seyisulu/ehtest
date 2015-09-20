@@ -14,6 +14,10 @@
               </md-button>
             </md-fab-trigger>
             <md-fab-actions>
+                <md-button aria-label="Home" class="md-fab md-raised md-mini" style="background-color:#7B1FA2;" ng-click="goHome($event)">
+                  <md-icon md-svg-src="img/icons/white/home3.svg" aria-label="Register"></md-icon>
+                  <md-tooltip>Home</md-tooltip>
+                </md-button>
                 <md-button aria-label="Register" class="md-fab md-raised md-mini" style="background-color:#7B1FA2;" ng-click="showRegister($event)">
                   <md-icon md-svg-src="img/icons/white/user-plus.svg" aria-label="Register"></md-icon>
                   <md-tooltip>Register</md-tooltip>
@@ -21,10 +25,6 @@
                 <md-button aria-label="Login" class="md-fab md-raised md-mini" style="background-color:#1976D2;" ng-click="showLogin($event)">
                   <md-icon md-svg-src="img/icons/white/enter.svg" aria-label="Login"></md-icon>
                   <md-tooltip>Login</md-tooltip>
-                </md-button>
-                <md-button aria-label="Logout" class="md-fab md-raised md-mini" style="background-color:#455A64;" ng-click="logout($event)">
-                  <md-icon md-svg-src="img/icons/white/exit.svg" aria-label="Logout"></md-icon>
-                  <md-tooltip>Logout</md-tooltip>
                 </md-button>
                 <md-button aria-label="About eHospital" class="md-fab md-raised md-mini" style="background-color:#689F38;">
                   <md-icon md-svg-src="img/icons/white/library.svg" aria-label="About eHospital"></md-icon>
