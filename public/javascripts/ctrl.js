@@ -28,7 +28,7 @@
   }
   
   function PrescribeController($scope, $rootScope, $http, $mdDialog) {
-    $scope.p = {number:'',language:'',drugs:[{drugname:'',drugdosage:'',drugtimes:'',drugfrequency:'day'}]};
+    $scope.p = {number:'',lang:'',drugs:[{name:'',dosage:'',times:'',frequency:'day'}]};
     // $scope.drugfrequency = "day";
     $scope.hide = function() {
       $mdDialog.hide();
@@ -43,6 +43,7 @@
     };
     $scope.addDrug = function() {
       $scope.p.drugs.push({name:'',dosage:'',times:'',frequency:'day'});
+
       console.log($rootScope.nd);
       console.log($scope.p);
     };
@@ -179,27 +180,22 @@
   function PCtrl ($rootScope, $scope, $http, UserSvc) {
     $rootScope.activePage = 'prescriptions';
     $rootScope.homeLoaded = 0;
-    $scope.ps = $rootScope.previous?$rootScope.previous:[];
-    // if($scope.ps.length<1) {
-      $http.get("/api/medications", {params: {doctor: $rootScope.nd/*,nocache: new Date().getTime()*/}})
-        .success(function(response) {
-          console.log("Get Success: ");
-          console.log(response);
-          $scope.ps = response;
-          $rootScope.previous = response;
-        });      
-    // }
+    $scope.ps = $rootScope.previous;
+    $scope.gps = function(){return $rootScope.previous;};
+    console.log($scope.gps());
+
     $scope.reminder   = function(c,d){
-      console.log("This is c: "+c);
+      console.log("This is c: ", c);
       console.log("This is d: "+d);
+      console.log($rootScope.previous[c].drugs[0].name);
       $http.post('/api/sms',{
-        patient: $rootScope.previous[c].drugs[d].name,
+        patient: $scope.gps()[c].patient,
         lang: $rootScope.previous[c].lang,
         drugs: [{
-          name: $rootScope.previous[c].drugs[d].name,
-          dosage: $rootScope.previous[c].drugs[d].dosage,
-          times: $rootScope.previous[c].drugs[d].times,
-          frequency: $rootScope.previous[c].drugs[d].frequency
+          name: $rootScope.previous[c].drugs[0].name,
+          dosage: $rootScope.previous[c].drugs[0].dosage,
+          times: $rootScope.previous[c].drugs[0].times,
+          frequency: $rootScope.previous[c].drugs[0].frequency
         }]
       });
     }
@@ -303,7 +299,7 @@
         $http.post('/api/medications', {
           doctor: $rootScope.nd,
           patient: $rootScope.p.number,
-          lang: $rootScope.p.language,
+          lang: $rootScope.p.lang,
           drugs: $rootScope.p.drugs
         })
         .success(function(response) {

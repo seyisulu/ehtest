@@ -13,18 +13,16 @@
 
           <p ng-show="previous.length<1">No prescriptions yet.</p>
 
-          <md-grid-tile class="red" md-rowspan="2" md-colspan="2" md-colspan-sm="1" ng-repeat="p in previous">
-            <p>{{p.language}}</p>
+          <md-grid-tile class="red" md-rowspan="2" md-colspan="2" md-colspan-sm="1" ng-repeat="p in gps()">
+            <p>{{p.lang}}</p>
 
             <md-list>
               
-              <md-list-item class="md-2-line" ng-repeat="drg in p.drugs">
-                
+              <md-list-item class="md-2-line" ng-repeat="drg in p.drugs">             
                 <div class="md-list-item-text">
                   <h1> {{ drg.name }} </h1>
                   <p>Dosage: <strong>{{drg.dosage}}</strong><br />Frequency: <strong>{{drg.times}}</strong> times every <strong>{{drg.frequency}}</strong></p>                  
                 </div>
-
               </md-list-item>
               <button type = "submit" class="btn-primary" ng-click="reminder(previous.indexOf(p), previous[previous.indexOf(p)].drugs.indexOf(drg))">Call/Send SMS reminder</button>
             </md-list>
